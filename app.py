@@ -11,26 +11,22 @@ load_dotenv()
 app = Flask(__name__)
 
 # --- 設定 ---
-# 開発用データベース（SQLite）
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sns.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# シークレットキー（セッション等で使用。本番ではランダムな値に変更すること）
 app.config['SECRET_KEY'] = 'dev-secret-key'
 
 db = SQLAlchemy(app)
 
-# --- OpenAIクライアント設定 ---
-# APIキーが設定されていない場合はモックモードで動作
+# OpenAIクライアント設定
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 # --- データベースモデル ---
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(280), nullable=False) # Xの制限に合わせる
+    content = db.Column(db.String(280), nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # 表示用に日時をフォーマットするメソッド
     def formatted_time(self):
         return self.timestamp.strftime("%Y/%m/%d %H:%M")
 
@@ -42,7 +38,6 @@ with app.app_context():
 
 @app.route('/')
 def index():
-    # 最新の投稿順に表示
     posts = Post.query.order_by(Post.timestamp.desc()).all()
     return render_template('index.html', posts=posts)
 
@@ -55,40 +50,61 @@ def create_post():
         db.session.commit()
     return redirect(url_for('index'))
 
+# 【追加】投稿詳細ページ
+@app.route('/post/<int:post_id>')
+def post_detail(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('detail.html', post=post)
+
+# 【既存】インラインAI解析（一覧ページ用）
 @app.route('/api/ask_ai', methods=['POST'])
 def ask_ai():
-    """
-    投稿内容を受け取り、AIによる解説や反応を返すAPI
-    """
     data = request.json
     post_content = data.get('content')
-
+    
     if not post_content:
-        return jsonify({'error': 'No content provided'}), 400
+        return jsonify({'error': 'No content'}), 400
 
-    # APIキーがない場合のモック動作（開発用）
     if not client:
         import time
-        time.sleep(1) # AIの思考時間を演出
-        return jsonify({
-            'answer': f"【AIモック回答】\nこの投稿「{post_content[:10]}...」は興味深いですね。\nAPIキーを設定すると、GPT-4oが文脈を解析して返答します。"
-        })
+        time.sleep(1)
+        return jsonify({'answer': "【AIモック】APIキー未設定のため自動応答です。"})
 
     try:
-        # 実際のOpenAI APIコール
         response = client.chat.completions.create(
-            model="gpt-4o-mini", # コストパフォーマンスの良いモデル
+            model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "あなたはSNSのアシスタントAI（Grokのような存在）です。ユーザーの投稿に対して、機知に富んだコメント、ファクトチェック、あるいは補足情報を短く返してください。"},
+                {"role": "system", "content": "SNSの投稿に対し、短く気の利いたコメントや補足を行ってください。"},
                 {"role": "user", "content": post_content}
             ]
         )
-        answer = response.choices[0].message.content
-        return jsonify({'answer': answer})
-    
+        return jsonify({'answer': response.choices[0].message.content})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# 【追加】対話型AIチャット（詳細ページ用）
+@app.route('/api/chat_with_post', methods=['POST'])
+def chat_with_post():
+    data = request.json
+    post_content = data.get('context') # 投稿本文
+    user_question = data.get('prompt') # ユーザーの質問
+
+    if not client:
+        import time
+        time.sleep(1)
+        return jsonify({'answer': f"【AIモック回答】\n質問: {user_question}\nに対する回答です。"})
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": f"あなたは有能なAIアシスタントです。以下の投稿内容を前提コンテキストとして、ユーザーの質問に答えてください。\n\n[対象の投稿]\n{post_content}"},
+                {"role": "user", "content": user_question}
+            ]
+        )
+        return jsonify({'answer': response.choices[0].message.content})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-    

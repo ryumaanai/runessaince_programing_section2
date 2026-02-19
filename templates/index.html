@@ -4,73 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Next-SNS</title>
-    <!-- Tailwind CSS (CDN) -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwindを削除し、独自のCSSを読み込み -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <!-- アイコンセット (Phosphor Icons) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <style>
-        /* スクロールバーのカスタマイズ（Xっぽく） */
-        body { background-color: black; color: white; }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
 </head>
-<body class="flex justify-center min-h-screen">
+<body>
 
-    <!-- 全体レイアウト: 左ナビ、メイン、右カラム -->
-    <div class="flex w-full max-w-7xl">
+    <!-- 全体レイアウト -->
+    <div class="app-layout">
         
-        <!-- 左サイドバー (Navigation) -->
-        <header class="hidden sm:flex flex-col w-20 xl:w-64 p-2 sticky top-0 h-screen border-r border-gray-800">
-            <div class="p-3 mb-4 w-12 h-12 flex items-center justify-center rounded-full hover:bg-gray-900 cursor-pointer">
-                <!-- ロゴ -->
-                <i class="ph-fill ph-x-logo text-3xl text-white"></i>
+        <!-- 左サイドバー -->
+        <header class="sidebar-left">
+            <div class="logo-container">
+                <i class="ph-fill ph-x-logo text-3xl" style="font-size: 1.875rem;"></i>
             </div>
-            <nav class="flex flex-col gap-2">
-                <a href="/" class="flex items-center gap-4 p-3 rounded-full hover:bg-gray-900 transition font-bold text-xl">
-                    <i class="ph-fill ph-house text-2xl"></i>
-                    <span class="hidden xl:block">ホーム</span>
+            <nav class="nav-menu">
+                <a href="/" class="nav-item active">
+                    <i class="ph-fill ph-house"></i>
+                    <span class="label">ホーム</span>
                 </a>
-                <a href="#" class="flex items-center gap-4 p-3 rounded-full hover:bg-gray-900 transition text-xl text-gray-400">
-                    <i class="ph-regular ph-magnifying-glass text-2xl"></i>
-                    <span class="hidden xl:block">検索</span>
+                <a href="#" class="nav-item" style="color: var(--gray-text);">
+                    <i class="ph-regular ph-bell"></i>
+                    <span class="label">検索</span>
                 </a>
-                <a href="#" class="flex items-center gap-4 p-3 rounded-full hover:bg-gray-900 transition text-xl text-gray-400">
-                    <i class="ph-regular ph-bell text-2xl"></i>
-                    <span class="hidden xl:block">通知</span>
-                </a>
-                <a href="#" class="flex items-center gap-4 p-3 rounded-full hover:bg-gray-900 transition text-xl text-gray-400">
-                    <i class="ph-regular ph-robot text-2xl"></i>
-                    <span class="hidden xl:block">Grok</span>
+                <a href="#" class="nav-item" style="color: var(--gray-text);">
+                    <i class="ph-regular ph-bell"></i>
+                    <span class="label">通知</span>
                 </a>
             </nav>
-            <button class="mt-8 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-full shadow-lg transition">
-                <span class="hidden xl:block">ポストする</span>
-                <i class="ph-fill ph-pencil-simple xl:hidden text-xl"></i>
-            </button>
         </header>
 
         <!-- メインフィード -->
-        <main class="flex-1 border-r border-gray-800 max-w-2xl w-full">
-            <!-- ヘッダー -->
-            <div class="sticky top-0 z-10 bg-black/80 backdrop-blur-md border-b border-gray-800 p-4">
-                <h1 class="font-bold text-xl">ホーム</h1>
+        <main class="main-content">
+            <div class="sticky-header">
+                <h1 class="page-title">ホーム</h1>
             </div>
 
             <!-- 投稿フォーム -->
-            <div class="p-4 border-b border-gray-800 flex gap-4">
-                <div class="w-10 h-10 rounded-full bg-gray-600 flex-shrink-0"></div> <!-- アバター -->
-                <form action="/post" method="POST" class="w-full">
-                    <textarea name="content" rows="2" placeholder="いまどうしてる？" 
-                        class="w-full bg-transparent text-xl placeholder-gray-500 border-none focus:ring-0 resize-none outline-none text-white"></textarea>
-                    <div class="flex justify-between items-center mt-2 border-t border-gray-800 pt-2">
-                        <div class="flex gap-2 text-blue-400">
-                            <i class="ph-regular ph-image cursor-pointer hover:bg-blue-500/10 p-2 rounded-full"></i>
-                            <i class="ph-regular ph-gif cursor-pointer hover:bg-blue-500/10 p-2 rounded-full"></i>
+            <div class="compose-area">
+                <div class="avatar"></div>
+                <form action="/post" method="POST" class="compose-form">
+                    <textarea name="content" rows="2" placeholder="いまどうしてる？" class="compose-input"></textarea>
+                    <div class="compose-actions">
+                        <div class="icon-actions">
+                            <div class="icon-btn"><i class="ph-regular ph-image text-xl" style="font-size: 1.25rem;"></i></div>
                         </div>
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-1.5 rounded-full disabled:opacity-50">
-                            ポストする
-                        </button>
+                        <button type="submit" class="btn-post">ポストする</button>
                     </div>
                 </form>
             </div>
@@ -78,94 +58,37 @@
             <!-- タイムライン -->
             <div id="timeline">
                 {% for post in posts %}
-                <div class="p-4 border-b border-gray-800 hover:bg-gray-900/30 transition cursor-pointer article-container" data-id="{{ post.id }}">
-                    <div class="flex gap-3">
-                        <div class="w-10 h-10 rounded-full bg-gray-600 flex-shrink-0"></div> <!-- アバター -->
-                        <div class="w-full">
-                            <div class="flex items-center gap-2">
-                                <span class="font-bold">ユーザー名</span>
-                                <span class="text-gray-500">@username</span>
-                                <span class="text-gray-500">·</span>
-                                <span class="text-gray-500 text-sm">{{ post.formatted_time() }}</span>
-                            </div>
-                            <div class="mt-1 text-white whitespace-pre-wrap post-content">{{ post.content }}</div>
-                            
-                            <!-- アクションボタン群 -->
-                            <div class="flex justify-between mt-3 text-gray-500 max-w-md">
-                                <div class="group flex items-center gap-1 hover:text-blue-400 cursor-pointer">
-                                    <div class="p-2 rounded-full group-hover:bg-blue-500/10"><i class="ph-regular ph-chat-circle"></i></div>
-                                    <span class="text-sm">0</span>
-                                </div>
-                                <div class="group flex items-center gap-1 hover:text-green-400 cursor-pointer">
-                                    <div class="p-2 rounded-full group-hover:bg-green-500/10"><i class="ph-regular ph-arrows-clock-wise"></i></div>
-                                    <span class="text-sm">0</span>
-                                </div>
-                                <div class="group flex items-center gap-1 hover:text-pink-400 cursor-pointer">
-                                    <div class="p-2 rounded-full group-hover:bg-pink-500/10"><i class="ph-regular ph-heart"></i></div>
-                                    <span class="text-sm">0</span>
-                                </div>
-                                <!-- AI解析ボタン (Grok風) -->
-                                <div class="group flex items-center gap-1 hover:text-purple-400 cursor-pointer" onclick="askAI(this, '{{ post.content | replace('\n', '\\n') | replace("'", "\\'") }}')">
-                                    <div class="p-2 rounded-full group-hover:bg-purple-500/10">
-                                        <i class="ph-fill ph-sparkle text-purple-500"></i>
-                                    </div>
-                                    <span class="text-sm text-purple-500">AI解析</span>
-                                </div>
-                            </div>
+                <div class="post-item" onclick="window.location.href='/post/{{ post.id }}'">
+                    <div class="avatar" style="width: 2.5rem; height: 2.5rem;"></div>
+                    <div style="width: 100%;">
+                        <div class="post-header">
+                            <span class="user-name">ボブ</span>
+                            <span class="user-id">@username</span>
+                            <span class="post-time">· {{ post.formatted_time() }}</span>
+                        </div>
+                        <div class="post-body">{{ post.content }}</div>
 
-                            <!-- AI回答表示エリア -->
-                            <div class="ai-response hidden mt-3 p-3 bg-gray-800/50 rounded-lg border border-purple-500/30 text-sm">
-                                <div class="flex items-center gap-2 text-purple-400 mb-1 font-bold">
-                                    <i class="ph-fill ph-robot"></i> AI Answer
-                                </div>
-                                <p class="text-gray-200 loading-text">解析中...</p>
-                            </div>
-
+                        <!-- AI回答表示エリア -->
+                        <div class="ai-response hidden">
+                            <p class="loading-text" style="color: #e5e7eb;">解析中...</p>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         </main>
-
-        <!-- 右サイドバー (トレンド等) -->
-        <div class="hidden lg:block w-80 p-4 pl-8">
-            <div class="bg-gray-900 rounded-full py-3 px-5 flex items-center gap-3 text-gray-500 focus-within:bg-black focus-within:ring-1 focus-within:ring-blue-500 focus-within:text-blue-500 border border-transparent focus-within:border-blue-500">
-                <i class="ph-regular ph-magnifying-glass"></i>
-                <input type="text" placeholder="検索" class="bg-transparent border-none outline-none text-white w-full">
-            </div>
-
-            <div class="mt-4 bg-gray-900 rounded-2xl p-4">
-                <h2 class="font-bold text-xl mb-4">おすすめトレンド</h2>
-                <div class="py-3 hover:bg-gray-800/50 -mx-4 px-4 cursor-pointer">
-                    <p class="text-xs text-gray-500">日本のトレンド</p>
-                    <p class="font-bold">Next-SNS開発中</p>
-                    <p class="text-xs text-gray-500">5,432 posts</p>
-                </div>
-                <div class="py-3 hover:bg-gray-800/50 -mx-4 px-4 cursor-pointer">
-                    <p class="text-xs text-gray-500">テクノロジー · トレンド</p>
-                    <p class="font-bold">FlaskとTailwind</p>
-                    <p class="text-xs text-gray-500">1,234 posts</p>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!-- JavaScript logic -->
     <script>
-        async function askAI(btnElement, content) {
-            // 親コンテナを見つける
-            const container = btnElement.closest('.article-container');
+        async function askInlineAI(btnElement, content) {
+            const container = btnElement.closest('.post-item');
             const responseBox = container.querySelector('.ai-response');
             const responseText = responseBox.querySelector('.loading-text');
 
-            // 表示切り替え
             if (!responseBox.classList.contains('hidden') && !responseText.textContent.includes('解析中')) {
-                // 既に表示されていて完了していれば閉じる
                 responseBox.classList.add('hidden');
                 return;
             }
-
             responseBox.classList.remove('hidden');
             responseText.textContent = "AIが思考中...";
 
@@ -175,14 +98,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ content: content })
                 });
-                
                 const data = await res.json();
-                if (data.error) {
-                    responseText.textContent = "エラーが発生しました: " + data.error;
-                } else {
-                    // タイプライター風エフェクト等はここで実装可能
-                    responseText.innerText = data.answer;
-                }
+                responseText.innerText = data.answer || data.error;
             } catch (e) {
                 responseText.textContent = "通信エラーが発生しました。";
             }

@@ -1,0 +1,488 @@
+/* --- 変数定義 (Tailwindのカラーパレットを模倣) --- */
+:root {
+    --bg-color: #000000;
+    --text-color: #ffffff;
+    --border-color: #1f2937; /* gray-800 */
+    --gray-hover: #111827;   /* gray-900 */
+    --gray-text: #6b7280;    /* gray-500 */
+    --gray-bg: #4b5563;      /* gray-600 */
+    --accent-blue: #3b82f6;  /* blue-500 */
+    --accent-blue-hover: #2563eb;
+    --accent-purple: #a855f7; /* purple-500 */
+    --accent-purple-hover: #9333ea;
+    --accent-green: #4ade80;
+    --accent-pink: #f472b6;
+    
+    --header-blur-bg: rgba(0, 0, 0, 0.8);
+    --font-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* --- リセット & 基本設定 --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-base);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button, textarea, input {
+    font-family: inherit;
+    outline: none;
+    border: none;
+}
+
+/* スクロールバー非表示 (Utility) */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* --- レイアウト構造 --- */
+.app-layout {
+    display: flex;
+    width: 100%;
+    max-width: 80rem; /* max-w-7xl */
+}
+
+/* --- 左サイドバー (Navigation) --- */
+.sidebar-left {
+    display: none; /* デフォルト非表示 (Mobile) */
+    flex-direction: column;
+    width: 5rem; /* w-20 */
+    padding: 0.5rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    border-right: 1px solid var(--border-color);
+}
+
+.logo-container {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    cursor: pointer;
+}
+.logo-container:hover {
+    background-color: var(--gray-hover);
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    border-radius: 9999px;
+    transition: background-color 0.2s;
+    font-size: 1.25rem; /* text-xl */
+}
+.nav-item:hover {
+    background-color: var(--gray-hover);
+}
+.nav-item.active {
+    font-weight: bold;
+}
+.nav-item .label {
+    display: none; /* XL以下は非表示 */
+}
+.nav-item i {
+    font-size: 1.5rem; /* text-2xl */
+}
+
+.btn-post-nav {
+    margin-top: 2rem;
+    background-color: var(--accent-blue);
+    color: white;
+    font-weight: bold;
+    padding: 0.75rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn-post-nav:hover {
+    background-color: var(--accent-blue-hover);
+}
+.btn-post-nav .label {
+    display: none;
+}
+.btn-post-nav i {
+    font-size: 1.25rem;
+}
+
+/* レスポンシブ: sm (640px) 以上 */
+@media (min-width: 640px) {
+    .sidebar-left {
+        display: flex;
+    }
+}
+
+/* レスポンシブ: xl (1280px) 以上 */
+@media (min-width: 1280px) {
+    .sidebar-left {
+        width: 16rem; /* w-64 */
+    }
+    .nav-item .label {
+        display: block;
+    }
+    .btn-post-nav .label {
+        display: block;
+    }
+    .btn-post-nav i {
+        display: none;
+    }
+}
+
+
+/* --- メインコンテンツ --- */
+.main-content {
+    flex: 1;
+    border-right: 1px solid var(--border-color);
+    max-width: 42rem; /* max-w-2xl */
+    width: 100%;
+    min-height: 100vh;
+}
+
+.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: var(--header-blur-bg);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.page-title {
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+.back-btn {
+    padding: 0.5rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.back-btn:hover {
+    background-color: var(--border-color);
+}
+
+/* 投稿作成フォーム */
+.compose-area {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    gap: 1rem;
+}
+.avatar {
+    width: 2.5rem; /* w-10 */
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: var(--gray-bg);
+    flex-shrink: 0;
+}
+.compose-form {
+    width: 100%;
+}
+.compose-input {
+    width: 100%;
+    background: transparent;
+    color: white;
+    font-size: 1.25rem;
+    resize: none;
+}
+.compose-input::placeholder {
+    color: var(--gray-text);
+}
+.compose-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 0.5rem;
+}
+.icon-actions {
+    display: flex;
+    gap: 0.5rem;
+    color: var(--accent-blue);
+}
+.icon-btn {
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+}
+.icon-btn:hover {
+    background-color: rgba(59, 130, 246, 0.1); /* blue-500/10 */
+}
+.btn-post {
+    background-color: var(--accent-blue);
+    color: white;
+    font-weight: bold;
+    padding: 0.375rem 1rem;
+    border-radius: 9999px;
+    cursor: pointer;
+}
+.btn-post:hover {
+    background-color: var(--accent-blue-hover);
+}
+.btn-post:disabled {
+    opacity: 0.5;
+}
+
+/* タイムライン */
+.post-item {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+    cursor: pointer;
+    display: flex;
+    gap: 0.75rem;
+}
+.post-item:hover {
+    background-color: rgba(17, 24, 39, 0.3); /* gray-900/30 */
+}
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.user-name { font-weight: bold; }
+.user-id, .post-time { color: var(--gray-text); font-size: 0.875rem; }
+.post-body {
+    margin-top: 0.25rem;
+    white-space: pre-wrap;
+    color: white;
+    line-height: 1.5;
+}
+.post-body-large {
+    font-size: 1.25rem;
+    margin: 1rem 0;
+}
+
+/* アクションボタン (いいね等) */
+.post-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.75rem;
+    color: var(--gray-text);
+    max-width: 28rem;
+}
+.action-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.action-icon-bg {
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ホバーエフェクト */
+.action-group:hover.blue { color: var(--accent-blue); }
+.action-group:hover.blue .action-icon-bg { background-color: rgba(59, 130, 246, 0.1); }
+
+.action-group:hover.green { color: var(--accent-green); }
+.action-group:hover.green .action-icon-bg { background-color: rgba(74, 222, 128, 0.1); }
+
+.action-group:hover.pink { color: var(--accent-pink); }
+.action-group:hover.pink .action-icon-bg { background-color: rgba(244, 114, 182, 0.1); }
+
+.action-group:hover.purple { color: var(--accent-purple); }
+.action-group:hover.purple .action-icon-bg { background-color: rgba(168, 85, 247, 0.1); }
+
+/* AI回答エリア (インライン) */
+.ai-response {
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background-color: rgba(31, 41, 55, 0.5); /* gray-800/50 */
+    border-radius: 0.5rem;
+    border: 1px solid rgba(168, 85, 247, 0.3); /* purple/30 */
+    font-size: 0.875rem;
+}
+.hidden { display: none; }
+
+/* 詳細ページ用のスタイル */
+.detail-meta {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--gray-text);
+}
+.detail-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 1.25rem;
+    color: var(--gray-text);
+}
+.detail-actions i {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.detail-actions i:hover { color: var(--accent-blue); }
+.detail-actions i.heart:hover { color: var(--accent-pink); }
+.detail-actions i.retweet:hover { color: var(--accent-green); }
+
+.empty-replies {
+    padding: 1rem;
+    text-align: center;
+    color: var(--gray-text);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* --- 右サイドバー (AI Chat) --- */
+.sidebar-right {
+    display: none; /* デフォルト非表示 */
+    flex-direction: column;
+    width: 24rem; /* w-96 */
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    border-left: 1px solid var(--border-color);
+}
+@media (min-width: 1024px) { /* lg以上で表示 */
+    .sidebar-right {
+        display: flex;
+    }
+}
+
+.ai-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: var(--accent-purple);
+    font-weight: bold;
+    font-size: 1.25rem;
+    padding: 0 0.5rem;
+}
+
+.chat-history {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    font-size: 0.875rem;
+}
+
+.chat-row {
+    display: flex;
+    gap: 0.5rem;
+}
+.chat-row.user {
+    flex-direction: row-reverse;
+}
+
+.chat-avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: white;
+}
+.chat-avatar.ai { background-color: #581c87; /* purple-900 */ }
+.chat-avatar.user { background-color: var(--gray-bg); }
+
+.chat-bubble {
+    padding: 0.75rem;
+    border-radius: 1rem;
+    color: #e5e7eb; /* gray-200 */
+    max-width: 85%;
+    white-space: pre-wrap;
+}
+.chat-bubble.ai {
+    background-color: var(--gray-hover);
+    border-top-left-radius: 0;
+}
+.chat-bubble.user {
+    background-color: #2563eb; /* blue-600 */
+    border-top-right-radius: 0;
+}
+
+.chat-input-area {
+    position: relative;
+    background-color: var(--gray-hover);
+    border-radius: 0.75rem;
+    padding: 0.5rem;
+    border: 1px solid #374151; /* gray-700 */
+    transition: border-color 0.2s;
+}
+.chat-input-area:focus-within {
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 0 1px var(--accent-purple);
+}
+
+.chat-textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    resize: none;
+    padding-right: 2.5rem;
+    font-size: 1rem;
+}
+
+.chat-send-btn {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    padding: 0.375rem;
+    background-color: #7e22ce; /* purple-600 */
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+.chat-send-btn:hover {
+    background-color: #6b21a8; /* purple-700 */
+}

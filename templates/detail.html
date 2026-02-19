@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投稿詳細 - Next-SNS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <!-- 左サイドバー (共通) -->
+        <header class="sidebar-left">
+            <div class="logo-container" onclick="window.location.href='/'">
+                <i class="ph-fill ph-x-logo" style="font-size: 1.875rem;"></i>
+            </div>
+            <nav class="nav-menu">
+                <a href="/" class="nav-item">
+                    <i class="ph-fill ph-house"></i>
+                    <span class="label">ホーム</span>
+                </a>
+            </nav>
+        </header>
+
+        <!-- メイン：投稿詳細 -->
+        <main class="main-content">
+            <div class="sticky-header">
+                <a href="/" class="back-btn">
+                    <i class="ph-bold ph-arrow-left" style="font-size: 1.25rem;"></i>
+                </a>
+                <h1 class="page-title">ポスト</h1>
+            </div>
+
+            <div style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
+                <div style="display: flex; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <div class="avatar"></div>
+                    <div>
+                        <div class="user-name">ボブ</div>
+                        <div class="user-id">@username</div>
+                    </div>
+                </div>
+                
+                <div class="post-body-large" id="post-content">{{ post.content }}</div>
+                
+                <div class="detail-meta">
+                    {{ post.formatted_time() }}
+                </div>
+
+                <div class="detail-actions">
+                    <i class="ph-regular ph-chat-circle"></i>
+                    <i class="ph-regular ph-arrows-clock-wise retweet"></i>
+                    <i class="ph-regular ph-heart heart"></i>
+                    <i class="ph-regular ph-share-network"></i>
+                </div>
+                
+                <div class="empty-replies">
+                    <p>リプライはまだありません</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- 右サイドバー：AIチャット -->
+        <aside class="sidebar-right">
+            <div class="ai-header">
+                <i class="ph-fill ph-sparkle"></i>
+                <span>AIアシスタント</span>
+            </div>
+
+            <!-- チャット履歴 -->
+            <div id="chat-history" class="chat-history hide-scrollbar">
+                <div class="chat-row">
+                    <div class="chat-avatar ai">
+                        <i class="ph-fill ph-robot"></i>
+                    </div>
+                    <div class="chat-bubble ai">この投稿について、何か質問はありますか？<br>「要約して」「反論を考えて」など何でも聞いてください。</div>
+                </div>
+            </div>
+
+            <!-- 入力エリア -->
+            <div class="chat-input-area">
+                <textarea id="chat-input" rows="2" placeholder="AIに質問する..." class="chat-textarea"></textarea>
+                <button onclick="sendChat()" class="chat-send-btn">
+                    <i class="ph-bold ph-paper-plane-right"></i>
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        const chatHistory = document.getElementById('chat-history');
+        const chatInput = document.getElementById('chat-input');
+        const postContent = document.getElementById('post-content').innerText;
+
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.isComposing) return;
+
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChat();
+            }
+        });
+
+        async function sendChat() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            addMessage(text, 'user');
+            chatInput.value = '';
+
+            const loadingId = addLoadingMessage();
+
+            try {
+                const res = await fetch('/api/chat_with_post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        context: postContent,
+                        prompt: text 
+                    })
+                });
+                const data = await res.json();
+                document.getElementById(loadingId).remove();
+                addMessage(data.answer || "エラーが発生しました", 'ai');
+            } catch (e) {
+                document.getElementById(loadingId).remove();
+                addMessage("通信エラーが発生しました", 'ai');
+            }
+        }
+
+        function addMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = "chat-row " + sender;
+            
+            const avatar = document.createElement('div');
+            avatar.className = `chat-avatar ${sender}`;
+            avatar.innerHTML = sender === 'user' ? '<i class="ph-fill ph-user"></i>' : '<i class="ph-fill ph-robot"></i>';
+
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ${sender}`;
+            bubble.innerText = text;
+
+            div.appendChild(avatar);
+            div.appendChild(bubble);
+            chatHistory.appendChild(div);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function addLoadingMessage() {
+            const id = 'loading-' + Date.now();
+            const div = document.createElement('div');
+            div.id = id;
+            div.className = "chat-row";
+            div.innerHTML = `
+                <div class="chat-avatar ai">
+                    <i class="ph-fill ph-robot"></i>
+                </div>
+                <div class="chat-bubble ai" style="color: #9ca3af; font-style: italic;">考え中...</div>
+            `;
+            chatHistory.appendChild(div);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+            return id;
+        }
+    </script>
+</body>
+</html>
