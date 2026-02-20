@@ -11,10 +11,11 @@
 
     <div class="app-layout">
         
-        <!-- 左サイドバー (共通) -->
+        <!-- 左サイドバー -->
         <header class="sidebar-left">
             <div class="logo-container" onclick="window.location.href='/'">
-                <i class="ph-fill ph-x-logo" style="font-size: 1.875rem;"></i>
+                <!-- ロゴ変更: 紙飛行機 -->
+                <i class="ph-fill ph-paper-plane-tilt" style="font-size: 2rem;"></i>
             </div>
             <nav class="nav-menu">
                 <a href="/" class="nav-item">
@@ -35,7 +36,9 @@
 
             <div style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
                 <div style="display: flex; gap: 0.75rem; margin-bottom: 0.5rem;">
-                    <div class="avatar"></div>
+                    <div class="avatar">
+                        <i class="ph-fill ph-user"></i>
+                    </div>
                     <div>
                         <div class="user-name">ボブ</div>
                         <div class="user-id">@username</div>
@@ -80,7 +83,7 @@
 
             <!-- 入力エリア -->
             <div class="chat-input-area">
-                <textarea id="chat-input" rows="2" placeholder="AIに質問する..." class="chat-textarea"></textarea>
+                <textarea id="chat-input" rows="1" placeholder="AIに質問する..." class="chat-textarea"></textarea>
                 <button onclick="sendChat()" class="chat-send-btn">
                     <i class="ph-bold ph-paper-plane-right"></i>
                 </button>
@@ -94,6 +97,7 @@
         const postContent = document.getElementById('post-content').innerText;
 
         chatInput.addEventListener('keydown', (e) => {
+            // 日本語入力中なら送信しない
             if (e.isComposing) return;
 
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -156,7 +160,9 @@
                 <div class="chat-avatar ai">
                     <i class="ph-fill ph-robot"></i>
                 </div>
-                <div class="chat-bubble ai" style="color: #9ca3af; font-style: italic;">考え中...</div>
+                <div class="chat-bubble ai" style="color: #9ca3af; font-style: italic;">
+                    考え中...
+                </div>
             `;
             chatHistory.appendChild(div);
             chatHistory.scrollTop = chatHistory.scrollHeight;

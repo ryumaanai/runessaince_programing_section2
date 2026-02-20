@@ -4,20 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Next-SNS</title>
-    <!-- Tailwindを削除し、独自のCSSを読み込み -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <!-- アイコンセット (Phosphor Icons) -->
+    <!-- アイコンセット -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
 
-    <!-- 全体レイアウト -->
     <div class="app-layout">
         
         <!-- 左サイドバー -->
         <header class="sidebar-left">
-            <div class="logo-container">
-                <i class="ph-fill ph-x-logo text-3xl" style="font-size: 1.875rem;"></i>
+            <div class="logo-container" onclick="window.location.href='/'">
+                <!-- ロゴ変更: 紙飛行機 -->
+                <i class="ph-fill ph-paper-plane-tilt" style="font-size: 2rem;"></i>
             </div>
             <nav class="nav-menu">
                 <a href="/" class="nav-item active">
@@ -43,7 +42,9 @@
 
             <!-- 投稿フォーム -->
             <div class="compose-area">
-                <div class="avatar"></div>
+                <div class="avatar">
+                    <i class="ph-fill ph-user"></i>
+                </div>
                 <form action="/post" method="POST" class="compose-form">
                     <textarea name="content" rows="2" placeholder="いまどうしてる？" class="compose-input"></textarea>
                     <div class="compose-actions">
@@ -59,7 +60,9 @@
             <div id="timeline">
                 {% for post in posts %}
                 <div class="post-item" onclick="window.location.href='/post/{{ post.id }}'">
-                    <div class="avatar" style="width: 2.5rem; height: 2.5rem;"></div>
+                    <div class="avatar" style="width: 3rem; height: 3rem;">
+                        <i class="ph-fill ph-user"></i>
+                    </div>
                     <div style="width: 100%;">
                         <div class="post-header">
                             <span class="user-name">ボブ</span>
@@ -67,10 +70,23 @@
                             <span class="post-time">· {{ post.formatted_time() }}</span>
                         </div>
                         <div class="post-body">{{ post.content }}</div>
+                        
+                        <!-- アクションボタン群 -->
+                        <div class="post-actions">
+                            <div class="action-group blue" onclick="event.stopPropagation()">
+                                <div class="action-icon-bg"><i class="ph-regular ph-chat-circle"></i></div>
+                            </div>
+                            <div class="action-group green" onclick="event.stopPropagation()">
+                                <div class="action-icon-bg"><i class="ph-regular ph-arrows-clock-wise"></i></div>
+                            </div>
+                            <div class="action-group pink" onclick="event.stopPropagation()">
+                                <div class="action-icon-bg"><i class="ph-regular ph-heart"></i></div>
+                            </div>
+                        </div>
 
                         <!-- AI回答表示エリア -->
                         <div class="ai-response hidden">
-                            <p class="loading-text" style="color: #e5e7eb;">解析中...</p>
+                            <p class="loading-text">解析中...</p>
                         </div>
                     </div>
                 </div>

@@ -1,19 +1,28 @@
-/* --- 変数定義 (Tailwindのカラーパレットを模倣) --- */
+/* --- 変数定義 (白基調 & AIパープル) --- */
 :root {
-    --bg-color: #000000;
-    --text-color: #ffffff;
-    --border-color: #1f2937; /* gray-800 */
-    --gray-hover: #111827;   /* gray-900 */
-    --gray-text: #6b7280;    /* gray-500 */
-    --gray-bg: #4b5563;      /* gray-600 */
-    --accent-blue: #3b82f6;  /* blue-500 */
-    --accent-blue-hover: #2563eb;
-    --accent-purple: #a855f7; /* purple-500 */
-    --accent-purple-hover: #9333ea;
-    --accent-green: #4ade80;
-    --accent-pink: #f472b6;
+    /* ベースカラー: 白 */
+    --bg-color: #ffffff;
+    --text-color: #111827; /* gray-900 */
+    --border-color: #e5e7eb; /* gray-200 */
     
-    --header-blur-bg: rgba(0, 0, 0, 0.8);
+    /* 汎用グレー */
+    --gray-hover: #f3f4f6;   /* gray-100 */
+    --gray-text: #6b7280;    /* gray-500 */
+    --gray-bg: #e5e7eb;      /* gray-200 (アバター等) */
+    
+    /* 指定アクセントカラー (AI & メイン) */
+    --accent-purple: #a855f7;
+    --accent-purple-hover: #9333ea;
+    
+    /* アクション用カラー (白背景に合わせて視認性を調整) */
+    --accent-blue: #3b82f6;
+    --accent-green: #10b981;
+    --accent-pink: #ec4899;
+    
+    /* 透過背景 */
+    --header-blur-bg: rgba(255, 255, 255, 0.9);
+    
+    /* フォント */
     --font-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
@@ -33,38 +42,25 @@ body {
     min-height: 100vh;
 }
 
-a {
-    text-decoration: none;
-    color: inherit;
-}
+a { text-decoration: none; color: inherit; }
+button, textarea, input { font-family: inherit; outline: none; border: none; }
 
-button, textarea, input {
-    font-family: inherit;
-    outline: none;
-    border: none;
-}
-
-/* スクロールバー非表示 (Utility) */
-.hide-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-.hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
+/* スクロールバー非表示 */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* --- レイアウト構造 --- */
 .app-layout {
     display: flex;
     width: 100%;
-    max-width: 80rem; /* max-w-7xl */
+    max-width: 80rem;
 }
 
 /* --- 左サイドバー (Navigation) --- */
 .sidebar-left {
-    display: none; /* デフォルト非表示 (Mobile) */
+    display: none;
     flex-direction: column;
-    width: 5rem; /* w-20 */
+    width: 5rem;
     padding: 0.5rem;
     position: sticky;
     top: 0;
@@ -75,13 +71,15 @@ button, textarea, input {
 .logo-container {
     padding: 0.75rem;
     margin-bottom: 1rem;
-    width: 3rem;
-    height: 3rem;
+    width: 3.5rem;
+    height: 3.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 9999px;
     cursor: pointer;
+    transition: background-color 0.2s;
+    color: var(--accent-purple); /* ロゴを紫色に */
 }
 .logo-container:hover {
     background-color: var(--gray-hover);
@@ -97,10 +95,11 @@ button, textarea, input {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
     border-radius: 9999px;
     transition: background-color 0.2s;
-    font-size: 1.25rem; /* text-xl */
+    font-size: 1.25rem;
+    color: var(--text-color);
 }
 .nav-item:hover {
     background-color: var(--gray-hover);
@@ -108,66 +107,44 @@ button, textarea, input {
 .nav-item.active {
     font-weight: bold;
 }
-.nav-item .label {
-    display: none; /* XL以下は非表示 */
-}
-.nav-item i {
-    font-size: 1.5rem; /* text-2xl */
-}
+.nav-item .label { display: none; }
+.nav-item i { font-size: 1.75rem; }
 
 .btn-post-nav {
     margin-top: 2rem;
-    background-color: var(--accent-blue);
+    background-color: var(--accent-purple); /* 投稿ボタンを紫に統一 */
     color: white;
     font-weight: bold;
     padding: 0.75rem;
     border-radius: 9999px;
     cursor: pointer;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(168, 85, 247, 0.4); /* 紫色の影 */
     transition: background-color 0.2s;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 .btn-post-nav:hover {
-    background-color: var(--accent-blue-hover);
+    background-color: var(--accent-purple-hover);
 }
-.btn-post-nav .label {
-    display: none;
-}
-.btn-post-nav i {
-    font-size: 1.25rem;
-}
+.btn-post-nav .label { display: none; }
+.btn-post-nav i { font-size: 1.5rem; }
 
-/* レスポンシブ: sm (640px) 以上 */
 @media (min-width: 640px) {
-    .sidebar-left {
-        display: flex;
-    }
+    .sidebar-left { display: flex; }
 }
-
-/* レスポンシブ: xl (1280px) 以上 */
 @media (min-width: 1280px) {
-    .sidebar-left {
-        width: 16rem; /* w-64 */
-    }
-    .nav-item .label {
-        display: block;
-    }
-    .btn-post-nav .label {
-        display: block;
-    }
-    .btn-post-nav i {
-        display: none;
-    }
+    .sidebar-left { width: 16rem; padding-left: 1rem; padding-right: 1rem;}
+    .nav-item .label { display: block; }
+    .btn-post-nav .label { display: block; }
+    .btn-post-nav i { display: none; }
 }
-
 
 /* --- メインコンテンツ --- */
 .main-content {
     flex: 1;
     border-right: 1px solid var(--border-color);
-    max-width: 42rem; /* max-w-2xl */
+    max-width: 42rem;
     width: 100%;
     min-height: 100vh;
 }
@@ -184,10 +161,7 @@ button, textarea, input {
     align-items: center;
     gap: 1rem;
 }
-.page-title {
-    font-weight: bold;
-    font-size: 1.25rem;
-}
+.page-title { font-weight: bold; font-size: 1.25rem; }
 .back-btn {
     padding: 0.5rem;
     border-radius: 9999px;
@@ -196,9 +170,7 @@ button, textarea, input {
     justify-content: center;
     cursor: pointer;
 }
-.back-btn:hover {
-    background-color: var(--border-color);
-}
+.back-btn:hover { background-color: var(--gray-hover); }
 
 /* 投稿作成フォーム */
 .compose-area {
@@ -208,60 +180,60 @@ button, textarea, input {
     gap: 1rem;
 }
 .avatar {
-    width: 2.5rem; /* w-10 */
-    height: 2.5rem;
+    width: 3rem;
+    height: 3rem;
     border-radius: 50%;
-    background-color: var(--gray-bg);
+    background-color: #475569;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
 }
-.compose-form {
-    width: 100%;
-}
+.compose-form { width: 100%; }
 .compose-input {
     width: 100%;
     background: transparent;
-    color: white;
+    color: var(--text-color);
     font-size: 1.25rem;
     resize: none;
+    margin-top: 0.5rem;
 }
-.compose-input::placeholder {
-    color: var(--gray-text);
-}
+.compose-input::placeholder { color: var(--gray-text); }
+
 .compose-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
     border-top: 1px solid var(--border-color);
-    padding-top: 0.5rem;
+    padding-top: 0.75rem;
 }
 .icon-actions {
     display: flex;
     gap: 0.5rem;
-    color: var(--accent-blue);
+    color: var(--accent-purple); /* アイコンも紫系に */
 }
 .icon-btn {
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 50%;
+    transition: background-color 0.2s;
 }
-.icon-btn:hover {
-    background-color: rgba(59, 130, 246, 0.1); /* blue-500/10 */
-}
+.icon-btn:hover { background-color: rgba(168, 85, 247, 0.1); }
+
 .btn-post {
-    background-color: var(--accent-blue);
+    background-color: var(--accent-purple);
     color: white;
     font-weight: bold;
-    padding: 0.375rem 1rem;
+    padding: 0.5rem 1.25rem;
     border-radius: 9999px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
-.btn-post:hover {
-    background-color: var(--accent-blue-hover);
-}
-.btn-post:disabled {
-    opacity: 0.5;
-}
+.btn-post:hover { background-color: var(--accent-purple-hover); }
+.btn-post:disabled { opacity: 0.5; }
 
 /* タイムライン */
 .post-item {
@@ -270,30 +242,22 @@ button, textarea, input {
     transition: background-color 0.2s;
     cursor: pointer;
     display: flex;
-    gap: 0.75rem;
+    gap: 1rem;
 }
-.post-item:hover {
-    background-color: rgba(17, 24, 39, 0.3); /* gray-900/30 */
-}
-.post-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-.user-name { font-weight: bold; }
-.user-id, .post-time { color: var(--gray-text); font-size: 0.875rem; }
+.post-item:hover { background-color: var(--gray-hover); } /* 白背景用のホバー色 */
+
+.post-header { display: flex; align-items: center; gap: 0.5rem; }
+.user-name { font-weight: bold; color: var(--text-color); }
+.user-id, .post-time { color: var(--gray-text); font-size: 0.9rem; }
 .post-body {
     margin-top: 0.25rem;
     white-space: pre-wrap;
-    color: white;
+    color: var(--text-color);
     line-height: 1.5;
 }
-.post-body-large {
-    font-size: 1.25rem;
-    margin: 1rem 0;
-}
+.post-body-large { font-size: 1.25rem; margin: 1rem 0; color: var(--text-color); }
 
-/* アクションボタン (いいね等) */
+/* アクションボタン */
 .post-actions {
     display: flex;
     justify-content: space-between;
@@ -314,35 +278,36 @@ button, textarea, input {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.2s;
 }
 
-/* ホバーエフェクト */
 .action-group:hover.blue { color: var(--accent-blue); }
 .action-group:hover.blue .action-icon-bg { background-color: rgba(59, 130, 246, 0.1); }
 
 .action-group:hover.green { color: var(--accent-green); }
-.action-group:hover.green .action-icon-bg { background-color: rgba(74, 222, 128, 0.1); }
+.action-group:hover.green .action-icon-bg { background-color: rgba(16, 185, 129, 0.1); }
 
 .action-group:hover.pink { color: var(--accent-pink); }
-.action-group:hover.pink .action-icon-bg { background-color: rgba(244, 114, 182, 0.1); }
+.action-group:hover.pink .action-icon-bg { background-color: rgba(236, 72, 153, 0.1); }
 
 .action-group:hover.purple { color: var(--accent-purple); }
 .action-group:hover.purple .action-icon-bg { background-color: rgba(168, 85, 247, 0.1); }
 
-/* AI回答エリア (インライン) */
+/* AI回答エリア */
 .ai-response {
     margin-top: 0.75rem;
-    padding: 0.75rem;
-    background-color: rgba(31, 41, 55, 0.5); /* gray-800/50 */
-    border-radius: 0.5rem;
-    border: 1px solid rgba(168, 85, 247, 0.3); /* purple/30 */
-    font-size: 0.875rem;
+    padding: 1rem;
+    background-color: #f5f3ff; /* 薄い紫の背景 */
+    border-radius: 0.75rem;
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    font-size: 0.95rem;
+    color: #4c1d95; /* 濃い紫の文字 */
 }
 .hidden { display: none; }
 
-/* 詳細ページ用のスタイル */
+/* 詳細ページ */
 .detail-meta {
-    padding: 0.75rem 0;
+    padding: 1rem 0;
     border-bottom: 1px solid var(--border-color);
     color: var(--gray-text);
 }
@@ -351,40 +316,34 @@ button, textarea, input {
     justify-content: space-around;
     padding: 0.75rem 0;
     border-bottom: 1px solid var(--border-color);
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     color: var(--gray-text);
 }
-.detail-actions i {
-    cursor: pointer;
-    transition: color 0.2s;
-}
+.detail-actions i { cursor: pointer; transition: color 0.2s; }
 .detail-actions i:hover { color: var(--accent-blue); }
 .detail-actions i.heart:hover { color: var(--accent-pink); }
 .detail-actions i.retweet:hover { color: var(--accent-green); }
 
 .empty-replies {
-    padding: 1rem;
+    padding: 2rem;
     text-align: center;
     color: var(--gray-text);
-    border-bottom: 1px solid var(--border-color);
+    background-color: var(--gray-hover);
 }
 
 /* --- 右サイドバー (AI Chat) --- */
 .sidebar-right {
-    display: none; /* デフォルト非表示 */
+    display: none;
     flex-direction: column;
-    width: 24rem; /* w-96 */
+    width: 24rem;
     padding: 1rem;
     position: sticky;
     top: 0;
     height: 100vh;
     border-left: 1px solid var(--border-color);
+    background-color: var(--bg-color);
 }
-@media (min-width: 1024px) { /* lg以上で表示 */
-    .sidebar-right {
-        display: flex;
-    }
-}
+@media (min-width: 1024px) { .sidebar-right { display: flex; } }
 
 .ai-header {
     display: flex;
@@ -394,7 +353,8 @@ button, textarea, input {
     color: var(--accent-purple);
     font-weight: bold;
     font-size: 1.25rem;
-    padding: 0 0.5rem;
+    padding: 0.5rem;
+    border-bottom: 2px solid rgba(168, 85, 247, 0.1);
 }
 
 .chat-history {
@@ -405,57 +365,61 @@ button, textarea, input {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    font-size: 0.875rem;
+    font-size: 0.95rem;
 }
 
 .chat-row {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    align-items: flex-start;
 }
-.chat-row.user {
-    flex-direction: row-reverse;
-}
+.chat-row.user { flex-direction: row-reverse; }
 
 .chat-avatar {
-    width: 2rem;
-    height: 2rem;
+    width: 2.25rem;
+    height: 2.25rem;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     color: white;
+    font-size: 1.1rem;
 }
-.chat-avatar.ai { background-color: #581c87; /* purple-900 */ }
-.chat-avatar.user { background-color: var(--gray-bg); }
+.chat-avatar.ai { background-color: var(--accent-purple); }
+.chat-avatar.user { background-color: var(--gray-text); }
 
 .chat-bubble {
-    padding: 0.75rem;
-    border-radius: 1rem;
-    color: #e5e7eb; /* gray-200 */
+    padding: 0.75rem 1rem;
+    border-radius: 1.25rem;
     max-width: 85%;
     white-space: pre-wrap;
+    line-height: 1.5;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 .chat-bubble.ai {
-    background-color: var(--gray-hover);
-    border-top-left-radius: 0;
+    background-color: #f3f4f6; /* 薄いグレー */
+    color: var(--text-color);
+    border-top-left-radius: 0.25rem;
 }
 .chat-bubble.user {
-    background-color: #2563eb; /* blue-600 */
-    border-top-right-radius: 0;
+    background-color: var(--accent-purple); /* ユーザー発言を紫に */
+    color: white;
+    border-top-right-radius: 0.25rem;
 }
 
 .chat-input-area {
     position: relative;
     background-color: var(--gray-hover);
-    border-radius: 0.75rem;
-    padding: 0.5rem;
-    border: 1px solid #374151; /* gray-700 */
-    transition: border-color 0.2s;
+    border-radius: 1.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid transparent;
+    transition: all 0.2s;
 }
 .chat-input-area:focus-within {
+    background-color: white;
     border-color: var(--accent-purple);
-    box-shadow: 0 0 0 1px var(--accent-purple);
+    box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
 }
 
 .chat-textarea {
@@ -463,18 +427,19 @@ button, textarea, input {
     background: transparent;
     border: none;
     outline: none;
-    color: white;
+    color: var(--text-color);
     resize: none;
     padding-right: 2.5rem;
     font-size: 1rem;
+    line-height: 1.5;
 }
 
 .chat-send-btn {
     position: absolute;
     bottom: 0.5rem;
     right: 0.5rem;
-    padding: 0.375rem;
-    background-color: #7e22ce; /* purple-600 */
+    padding: 0.5rem;
+    background-color: var(--accent-purple);
     color: white;
     border-radius: 50%;
     cursor: pointer;
@@ -482,7 +447,6 @@ button, textarea, input {
     align-items: center;
     justify-content: center;
     transition: background-color 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-.chat-send-btn:hover {
-    background-color: #6b21a8; /* purple-700 */
-}
+.chat-send-btn:hover { background-color: var(--accent-purple-hover); }
